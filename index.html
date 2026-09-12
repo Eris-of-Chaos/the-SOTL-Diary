@@ -2,14 +2,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Diary</title>
+<title>The Yellow Sign</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: #0a0a0a;
-    color: #b0b0b0;
+    background: #0a0908;
+    color: #a89f8f;
     font-family: Georgia, 'Times New Roman', serif;
     min-height: 100vh;
     display: flex;
@@ -17,168 +16,166 @@
     padding: 40px 20px;
   }
 
-  .container {
-    width: 100%;
-    max-width: 600px;
-  }
+  .container { width: 100%; max-width: 620px; }
 
   h1 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: normal;
-    letter-spacing: 3px;
+    letter-spacing: 4px;
     text-transform: uppercase;
+    margin-bottom: 10px;
+    color: #4a4535;
+    text-align: center;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 11px;
+    color: #2a2820;
+    letter-spacing: 2px;
     margin-bottom: 40px;
-    color: #555;
-    text-align: center;
-  }
-
-  /* ─── LOCK SCREEN ─── */
-  #lock-screen {
-    text-align: center;
-    padding: 60px 0;
-  }
-
-  #lock-screen p {
     font-style: italic;
-    color: #555;
-    margin-bottom: 30px;
-    font-size: 14px;
   }
 
-  .input-row {
-    display: flex;
-    gap: 10px;
-    max-width: 300px;
-    margin: 0 auto;
-  }
+  #lock-screen { text-align: center; padding: 60px 0; }
+  #lock-screen p { font-style: italic; color: #4a4535; margin-bottom: 30px; font-size: 14px; }
+
+  .input-row { display: flex; gap: 10px; max-width: 300px; margin: 0 auto; }
 
   input[type="password"] {
-    flex: 1;
-    padding: 12px 16px;
-    border: 1px solid #222;
-    border-radius: 2px;
-    font-family: inherit;
-    font-size: 14px;
-    background: #111;
-    color: #b0b0b0;
-    outline: none;
-    transition: border-color .2s;
+    flex: 1; padding: 12px 16px;
+    border: 1px solid #1a1812; border-radius: 2px;
+    font-family: inherit; font-size: 14px;
+    background: #0f0e0a; color: #a89f8f;
+    outline: none; transition: border-color .2s;
   }
-
-  input:focus { border-color: #555; }
-
-  input::placeholder { color: #333; }
+  input:focus { border-color: #3a3525; }
+  input::placeholder { color: #2a2820; }
 
   button {
     padding: 12px 20px;
-    background: #1a1a1a;
-    color: #888;
-    border: 1px solid #222;
-    border-radius: 2px;
-    font-family: inherit;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all .2s;
+    background: #14120e; color: #7a7260;
+    border: 1px solid #1a1812; border-radius: 2px;
+    font-family: inherit; font-size: 13px;
+    cursor: pointer; transition: all .2s;
   }
+  button:hover { background: #1a1812; color: #a89f8f; border-color: #2a2820; }
 
-  button:hover { background: #222; color: #bbb; border-color: #444; }
+  .error { color: #6a3320; font-size: 13px; margin-top: 14px; min-height: 18px; font-style: italic; }
 
-  .error {
-    color: #833;
-    font-size: 13px;
-    margin-top: 14px;
-    min-height: 18px;
-    font-style: italic;
-  }
-
-  /* ─── DIARY ─── */
   #diary { display: none; }
 
   .entry {
-    background: #0f0f0f;
-    border: 1px solid #1a1a1a;
-    border-radius: 2px;
-    padding: 24px;
-    margin-bottom: 14px;
-    position: relative;
-    transition: border-color .3s;
+    background: #0e0d0a;
+    border: 1px solid #1a1812; border-radius: 2px;
+    padding: 24px; margin-bottom: 14px;
+    position: relative; transition: border-color .3s;
   }
-
-  .entry:hover { border-color: #2a2a2a; }
+  .entry:hover { border-color: #2a2518; }
 
   .entry .date {
-    font-size: 11px;
-    color: #444;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 12px;
+    font-size: 11px; color: #3a3525;
+    letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px;
   }
 
   .entry .content {
-    font-size: 15px;
-    line-height: 1.8;
-    white-space: pre-wrap;
-    color: #999;
+    font-size: 15px; line-height: 1.8;
+    white-space: pre-wrap; color: #8a8272;
   }
 
-  .entry .content em {
-    color: #777;
-    font-style: italic;
+  .entry .content .sign {
+    color: #c8b830; font-size: 22px;
+    display: block; text-align: center;
+    margin: 16px 0; opacity: .6;
   }
 
-  .entry .content strong {
-    color: #aa4444;
-    font-weight: normal;
+  /* ─── FLICKER: WORD SWAP + YELLOW ─── */
+  .fw {
+    display: inline;
+    position: relative;
+    color: #a89f8f;
   }
 
-  .locked-msg {
-    text-align: center;
-    padding: 40px;
-    color: #333;
-    font-style: italic;
+  .fw .orig {
+    display: inline;
+    animation: fw-out var(--dur) ease-in-out var(--del) infinite;
   }
 
-  #lock-btn {
-    display: block;
-    margin: 30px auto 0;
-    background: none;
-    border: 1px solid #1a1a1a;
-    color: #444;
-    font-size: 12px;
-    padding: 10px 24px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
+  .fw .alt {
+    position: absolute;
+    left: 0; top: 0;
+    color: #d4c240;
+    text-shadow: 0 0 8px rgba(212,194,64,.6), 0 0 16px rgba(212,194,64,.3);
+    opacity: 0;
+    animation: fw-in var(--dur) ease-in-out var(--del) infinite;
   }
 
-  #lock-btn:hover { color: #777; border-color: #333; }
+  @keyframes fw-out {
+    0%, 100% { opacity: 1; }
+    44% { opacity: 1; }
+    47% { opacity: 0; }
+    53% { opacity: 0; }
+    56% { opacity: 1; }
+  }
 
+  @keyframes fw-in {
+    0%, 100% { opacity: 0; }
+    44% { opacity: 0; }
+    47% { opacity: 1; }
+    53% { opacity: 1; }
+    56% { opacity: 0; }
+  }
+
+  /* ─── FLICKER: PURE YELLOW PULSE ─── */
+  .fwy {
+    display: inline;
+    animation: fwy-anim var(--dur) ease-in-out var(--del) infinite;
+  }
+
+  @keyframes fwy-anim {
+    0%, 100% { color: inherit; text-shadow: none; }
+    44% { color: inherit; text-shadow: none; }
+    47% { color: #d4c240; text-shadow: 0 0 10px rgba(212,194,64,.7), 0 0 20px rgba(212,194,64,.3); }
+    53% { color: #d4c240; text-shadow: 0 0 10px rgba(212,194,64,.7), 0 0 20px rgba(212,194,64,.3); }
+    56% { color: inherit; text-shadow: none; }
+  }
+
+  /* ─── TITLE FLICKER ─── */
   @keyframes flicker {
     0%, 100% { opacity: 1; }
-    92% { opacity: 1; }
-    93% { opacity: .4; }
-    94% { opacity: 1; }
-    96% { opacity: .6; }
-    97% { opacity: 1; }
+    91% { opacity: 1; }
+    92% { opacity: .3; }
+    93% { opacity: 1; }
+    95% { opacity: .5; }
+    96% { opacity: 1; }
+    98% { opacity: .7; }
+    99% { opacity: 1; }
   }
+  .flicker { animation: flicker 6s ease-in-out infinite; }
 
-  .flicker { animation: flicker 5s ease-in-out infinite; }
+  #lock-btn {
+    display: block; margin: 30px auto 0;
+    background: none; border: 1px solid #1a1812;
+    color: #3a3525; font-size: 12px;
+    padding: 10px 24px; letter-spacing: 2px; text-transform: uppercase;
+  }
+  #lock-btn:hover { color: #6a6250; border-color: #2a2820; }
 </style>
 </head>
 <body>
 <div class="container">
   <h1 class="flicker">???</h1>
+  <div class="subtitle">This is not for you.</div>
 
-  <!-- Lock screen -->
   <div id="lock-screen">
-    <p>This diary is locked. You shouldn't be reading this.</p>
+    <p>You should not open this. The words inside will find you.</p>
     <div class="input-row">
       <input type="password" id="pass-input" placeholder="Password" autocomplete="off">
-      <button onclick="unlock()">Feel guilt?</button>
+      <button onclick="unlock()">Open</button>
     </div>
     <div class="error" id="lock-error"></div>
   </div>
 
-  <!-- Diary -->
   <div id="diary">
     <div id="entries"></div>
     <button id="lock-btn" onclick="lockDiary()">Close</button>
@@ -188,89 +185,108 @@
 <script>
 const PASSWORD = "Seryna Rivermaya";
 
-// ─── DIARY ENTRIES ───
+// ─── HELPERS ───
+let n = 0;
+
+// Word swaps to a DIFFERENT word in yellow
+function fw(a, b) {
+  n++;
+  const dur = (3.5 + (n % 5) * 0.8).toFixed(1);
+  const del = ((n * 0.9) % 6).toFixed(1);
+  return `<span class="fw" style="--dur:${dur}s;--del:${del}s"><span class="orig">${a}</span><span class="alt">${b}</span></span>`;
+}
+
+// Word pulses yellow (stays same word, just glows)
+function fwy(word) {
+  n++;
+  const dur = (4 + (n % 4) * 1).toFixed(1);
+  const del = ((n * 1.2) % 7).toFixed(1);
+  return `<span class="fwy" style="--dur:${dur}s;--del:${del}s">${word}</span>`;
+}
+
+// ─── ENTRIES ───
 const entries = [
   {
     date: "The first night",
-    text: `I bought the book at the estate sale. A first edition. The cover was black, but the pages — the pages were yellow. Not aged yellow. Not cream. Yellow like the color of a bruise that will never heal.
+    text: `I bought the book at the estate sale. A first edition. The cover was black, but the pages — the pages were ${fwy("yellow")}. Not aged yellow. Not cream. ${fw("Yellow", "Wrong")} like the color of a bruise that will never ${fw("heal", "close")}.
 
-The title page read: "The King in Yellow. A Drama in Two Acts."
+The title page read: "The King in ${fwy("Yellow")}. A Drama in Two Acts."
 
 I opened it.
 
-The first thing I saw was the Sign. A symbol I couldn't describe. It was in the corner of the page, printed in ink that seemed to move when I wasn't looking directly at it.
+The first thing I saw was the ${fw("Sign", "Face")}. A symbol I couldn't describe. It was in the corner of the page, printed in ink that seemed to ${fw("move", "breathe")} when I wasn't looking directly at it.
 
 I closed the book.
 
 I opened it again.
 
-The Sign was in the corner of my eye. I couldn't see it. I knew it was there.
+The Sign was in the corner of my eye. I couldn't see it. I knew it was ${fw("there", "here")}.
 
-I'm putting the book in the closet. I'm not reading it tonight.`
+I'm putting the book in the closet. I'm not reading it ${fw("tonight", "ever")}.`
   },
   {
     date: "The second night",
     text: `I read Act I.
 
-I shouldn't have. I know I shouldn't have. But the words — they don't read like words. They read like a door opening. Each sentence is a hinge.
+I shouldn't have. I know I shouldn't have. But the words — they don't read like words. They read like a ${fw("door", "wound")} opening. Each sentence is a ${fw("hinge", "stitch")}.
 
-The play is set in Carcosa. A city I've never heard of. A city that doesn't exist. Or one that does and I just can't remember it.
+The play is set in ${fwy("Carcosa")}. A city I've never heard of. A city that ${fw("doesn't", "never")} exist. Or one that does and I just can't ${fw("remember", "forget")} it.
 
-The lake. Lake Hali. The water is the color of the Sign. The actors wear the yellow robes. The King sits on his throne and his face is —
+The lake. Lake ${fw("Hali", "Hale")}. The water is the color of the Sign. The actors wear the ${fwy("yellow")} robes. The King sits on his throne and his face is —
 
 I can't write what his face is.
 
 I closed the book. I went to the window.
 
-The sky outside is wrong.
+The sky outside is ${fwy("wrong")}.
 
 There are two holes in it.
 
-Two round, dark holes, like someone punched through the sky with a thumb. They're in the northeast. They've always been there. I just never looked up.
+Two round, dark holes, like someone punched through the sky with a thumb. They're in the northeast. They've always been ${fw("there", "watching")}. I just never looked ${fw("up", "in")}.
 
 I'm going to put the book in the closet.
 
 I'm going to put the book in the closet.
 
-The closet is full of yellow.`
+The closet is full of ${fwy("yellow")}.`
   },
   {
     date: "The third night",
     text: `I read Act II.
 
-I don't remember deciding to. I woke up with the book in my hands and I was on the last page and my eyes were wet and I didn't know why.
+I don't remember deciding to. I woke up with the book in my hands and I was on the last page and my eyes were wet and I didn't know ${fw("why", "how")}.
 
-The King in Yellow. He's not a person. He's not a character. He's a — a frequency. A wavelength. The play is a carrier signal and the words are the transmission and you don't read the play, the play reads you.
+The King in Yellow. He's not a person. He's not a character. He's a — a ${fw("frequency", "parasite")}. A wavelength. The play is a carrier signal and the words are the transmission and you don't read the play, the play ${fw("reads", "wrote")} you.
 
-The ending. The King descends from the sky. Not falls. Descends. Like a tide. Like something that has always been above and is simply coming down now.
+The ending. The King descends from the sky. Not falls. ${fw("Descends", "Drips")}. Like a tide. Like something that has always been above and is simply coming down ${fw("now", "through you")}.
 
 The two holes in the sky are where he comes through.
 
 I looked up.
 
-The holes are bigger.
+The holes are ${fwy("bigger")}.
 
-They're the size of the moon.
+They're the size of the ${fw("moon", "sun")}.
 
 There's something in them. Something yellow. Something with a face that is almost —
 
 I'm putting the book in the closet.
 
-The closet is open.
+The closet is ${fw("open", "gone")}.
 
 The book is not in the closet.
 
-The book is on my desk. It's open. It's on a page I don't remember. The page is yellow. The ink is moving.
+The book is on my desk. It's open. It's on a page I don't remember. The page is yellow. The ink is ${fw("moving", "dripping")}.
 
-It's writing.
+It's ${fwy("writing")}.
 
-It's writing my name.`
+It's writing my ${fw("name", "face")}.`
   },
   {
     date: "The fourth night",
-    text: `The Sign is everywhere.
+    text: `The Sign is ${fwy("everywhere")}.
 
-It's in the grout of the bathroom tiles. It's in the pattern of the wallpaper. It's in the way the light comes through the blinds at 3 AM. I can't look at it directly. I can only see it in the corners. In the periphery. In the space between looking and not-looking.
+It's in the grout of the bathroom tiles. It's in the pattern of the wallpaper. It's in the way the light comes through the blinds at 3 AM. I can't look at it directly. I can only see it in the corners. In the periphery. In the space between looking and ${fw("not-looking", "seeing")}.
 
 I called my friend. I told him about the book. I told him about Carcosa. I told him about the two holes.
 
@@ -282,15 +298,15 @@ He said: "I've never heard of it."
 
 I said: "It's a play. Two acts. The King in Yellow."
 
-A long silence.
+A long ${fw("silence", "breath")}.
 
-Then he said: "You need to stop reading it. You need to stop thinking about it. You need to stop looking at the sky."
+Then he said: "You need to stop reading it. You need to stop thinking about it. You need to stop looking at the ${fw("sky", "ceiling")}."
 
 Then he said: "Seryna, what is the Sign?"
 
 I said: "I don't know."
 
-He said: "You just described it. You just described it and you didn't even know."
+He said: "You just described it. You just described it and you didn't even ${fw("know", "mean to")}."
 
 I hung up.
 
@@ -298,33 +314,33 @@ I'm not going to look at the sky tonight.
 
 I'm not going to look at the sky.
 
-The sky is looking at me.`
+The sky is ${fwy("looking")} at me.`
   },
   {
     date: "The fifth night",
-    text: `The neighbors are gone.
+    text: `The neighbors are ${fw("gone", "in")}.
 
-All of them. The apartment across the hall is empty. The one below is empty. The one above is empty. The furniture is still there. The dishes are still in the sinks. The TVs are still on, showing static.
+All of them. The apartment across the hall is empty. The one below is empty. The one above is empty. The furniture is still there. The dishes are still in the sinks. The TVs are still on, showing ${fw("static", "your face")}.
 
 But they're gone.
 
-I went outside. The street is empty. The cars are parked. The streetlights are on. But no one. No one anywhere.
+I went outside. The street is empty. The cars are parked. The streetlights are on. But no one. No one ${fw("anywhere", "left")}.
 
 Except —
 
-There's a woman at the end of the block. She's standing still. She's wearing a yellow robe. She's facing away from me.
+There's a woman at the end of the block. She's standing ${fw("still", "still")}. She's wearing a ${fwy("yellow")} robe. She's facing away from me.
 
 I walked toward her.
 
-She turned.
+She ${fwy("turned")}.
 
-Her face was blank. Not expressionless. Blank. Like a page before the ink. Like a sky before the holes.
+Her face was blank. Not expressionless. Blank. Like a page before the ink. Like a sky before the ${fw("holes", "face")}.
 
 She opened her mouth.
 
 She said my name.
 
-Not the way you say a name. The way the play says a name. Flat. Even. Like a notification. Like a door closing.
+Not the way you say a name. The way the play says a name. Flat. Even. Like a ${fw("notification", "diagnosis")}. Like a door ${fw("closing", "opening")}.
 
 I ran.
 
@@ -334,11 +350,11 @@ The book is on my desk.
 
 It's open to the last page.
 
-The last page is blank.
+The last page is ${fw("blank", "full")}.
 
 It's not blank.
 
-The ink is still wet.
+The ink is still ${fwy("wet")}.
 
 It's writing.`
   },
@@ -346,41 +362,41 @@ It's writing.`
     date: "The sixth night",
     text: `I can hear the lake.
 
-Lake Hali. I can hear it from my apartment. The sound of water moving. Slow. Patient. The sound of a lake that is very, very full and is about to overflow.
+Lake Hali. I can hear it from my apartment. The sound of water moving. Slow. ${fw("Patient", "Hungry")}. The sound of a lake that is very, very full and is about to ${fw("overflow", "break")}.
 
-The walls are yellow. Not painted. The yellow is coming through the walls. From behind them. From the space between the walls.
+The walls are yellow. Not painted. The yellow is coming through the walls. From behind them. From the space between the ${fw("walls", "ribs")}.
 
-The Sign is on the ceiling. I can see it now. I can look at it directly. It's not painful. It's worse than painful. It's — familiar. Like seeing your own face in a mirror for the first time.
+The Sign is on the ceiling. I can see it now. I can look at it directly. It's not painful. It's worse than painful. It's — ${fwy("familiar")}. Like seeing your own face in a mirror for the first time.
 
 The two holes are gone.
 
 The sky is whole.
 
-The sky is the color of the Sign.
+The sky is the color of the ${fwy("Sign")}.
 
-The King is here.
+The King is ${fw("here", "in")}.
 
-He's not in the room. He's not in the building. He's in the words. He's in the sentences. He's in the space between the letters. He's been here since I opened the book. He's been here since I read the first word. He's been here since I was born.
+He's not in the room. He's not in the building. He's in the words. He's in the sentences. He's in the space between the letters. He's been here since I opened the book. He's been here since I read the first word. He's been here since I was ${fw("born", "written")}.
 
 The play is over.
 
-The King has descended.
+The King has ${fw("descended", "arrived")}.
 
 Carcosa is here.
 
 Lake Hali is here.
 
-I am in Carcosa.
+I am in ${fwy("Carcosa")}.
 
 I have always been in Carcosa.
 
 The yellow robes are on the chair.
 
-I don't remember putting them there.
+I don't remember putting them ${fw("there", "on")}.
 
-I don't remember having hands.
+I don't remember having ${fw("hands", "a face")}.
 
-The Sign is the only thing that is real.
+The Sign is the only thing that is ${fw("real", "left")}.
 
 The Sign is the only thing that was ever real.
 
@@ -392,7 +408,7 @@ I'm not writing it.
 
 I can't write it.
 
-My hand is writing it.
+My hand is ${fwy("writing")} it.
 
 My hand is —`
   },
@@ -402,27 +418,27 @@ My hand is —`
 
 The diary ends here.
 
-The remaining pages are blank.
+The remaining pages are ${fw("blank", "full")}.
 
-The yellow is still in the ink.
+The yellow is still in the ${fw("ink", "blood")}.
 
-If you are reading this, you have already seen the Sign.
+If you are reading this, you have already seen the ${fwy("Sign")}.
 
-You have already looked up.
+You have already looked ${fw("up", "at me")}.
 
 You have already read Act I.
 
-The King is patient.
+The King is ${fw("patient", "hungry")}.
 
-The King is always patient.
+The King is always ${fw("patient", "watching")}.
 
-The lake is full.
+The lake is ${fwy("full")}.
 
-The holes are open.
+The holes are ${fw("open", "in you")}.
 
-The robes are waiting.
+The robes are ${fw("waiting", "on you")}.
 
-You are in Carcosa.
+You are in ${fwy("Carcosa")}.
 
 You have always been in Carcosa.
 
@@ -430,7 +446,7 @@ The play is not over.
 
 The play is never over.
 
-You are in Act II.
+You are in Act ${fw("II", "III")}.
 
 You are in Act II.
 
@@ -452,7 +468,7 @@ function unlock() {
     diaryEl.style.display = "block";
     renderEntries();
   } else {
-    lockError.textContent = "Wrong password. The diary doesn't like you.";
+    lockError.textContent = "The Sign does not recognize you.";
     passInput.value = "";
     passInput.focus();
   }
@@ -469,7 +485,7 @@ function lockDiary() {
 function renderEntries() {
   entriesEl.innerHTML = entries.map(e => `
     <div class="entry">
-      <div class="date">${e.date}</div>
+      ${e.date ? `<div class="date">${e.date}</div>` : ""}
       <div class="content">${e.text}</div>
     </div>
   `).join("");
