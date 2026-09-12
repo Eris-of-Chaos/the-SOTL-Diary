@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>The Diary</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    color: #b0b0b0;
+    font-family: Georgia, 'Times New Roman', serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: normal;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    color: #555;
+    text-align: center;
+  }
+
+  /* ─── LOCK SCREEN ─── */
+  #lock-screen {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  #lock-screen p {
+    font-style: italic;
+    color: #555;
+    margin-bottom: 30px;
+    font-size: 14px;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  input[type="password"] {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #222;
+    border-radius: 2px;
+    font-family: inherit;
+    font-size: 14px;
+    background: #111;
+    color: #b0b0b0;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  input:focus { border-color: #555; }
+
+  input::placeholder { color: #333; }
+
+  button {
+    padding: 12px 20px;
+    background: #1a1a1a;
+    color: #888;
+    border: 1px solid #222;
+    border-radius: 2px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  button:hover { background: #222; color: #bbb; border-color: #444; }
+
+  .error {
+    color: #833;
+    font-size: 13px;
+    margin-top: 14px;
+    min-height: 18px;
+    font-style: italic;
+  }
+
+  /* ─── DIARY ─── */
+  #diary { display: none; }
+
+  .entry {
+    background: #0f0f0f;
+    border: 1px solid #1a1a1a;
+    border-radius: 2px;
+    padding: 24px;
+    margin-bottom: 14px;
+    position: relative;
+    transition: border-color .3s;
+  }
+
+  .entry:hover { border-color: #2a2a2a; }
+
+  .entry .date {
+    font-size: 11px;
+    color: #444;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .entry .content {
+    font-size: 15px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    color: #999;
+  }
+
+  .entry .content em {
+    color: #777;
+    font-style: italic;
+  }
+
+  .entry .content strong {
+    color: #aa4444;
+    font-weight: normal;
+  }
+
+  .locked-msg {
+    text-align: center;
+    padding: 40px;
+    color: #333;
+    font-style: italic;
+  }
+
+  #lock-btn {
+    display: block;
+    margin: 30px auto 0;
+    background: none;
+    border: 1px solid #1a1a1a;
+    color: #444;
+    font-size: 12px;
+    padding: 10px 24px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  #lock-btn:hover { color: #777; border-color: #333; }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    92% { opacity: 1; }
+    93% { opacity: .4; }
+    94% { opacity: 1; }
+    96% { opacity: .6; }
+    97% { opacity: 1; }
+  }
+
+  .flicker { animation: flicker 5s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1 class="flicker">???</h1>
+
+  <!-- Lock screen -->
+  <div id="lock-screen">
+    <p>This diary is locked. You shouldn't be reading this.</p>
+    <div class="input-row">
+      <input type="password" id="pass-input" placeholder="Password" autocomplete="off">
+      <button onclick="unlock()">Feel guilt?</button>
+    </div>
+    <div class="error" id="lock-error"></div>
+  </div>
+
+  <!-- Diary -->
+  <div id="diary">
+    <div id="entries"></div>
+    <button id="lock-btn" onclick="lockDiary()">Close</button>
+  </div>
+</div>
+
+<script>
+const PASSWORD = "Seryna Rivermaya";
+
+// ─── DIARY ENTRIES ───
+const entries = [
+  {
+    date: "The first night",
+    text: `I bought the book at the estate sale. A first edition. The cover was black, but the pages — the pages were yellow. Not aged yellow. Not cream. Yellow like the color of a bruise that will never heal.
+
+The title page read: "The King in Yellow. A Drama in Two Acts."
+
+I opened it.
+
+The first thing I saw was the Sign. A symbol I couldn't describe. It was in the corner of the page, printed in ink that seemed to move when I wasn't looking directly at it.
+
+I closed the book.
+
+I opened it again.
+
+The Sign was in the corner of my eye. I couldn't see it. I knew it was there.
+
+I'm putting the book in the closet. I'm not reading it tonight.`
+  },
+  {
+    date: "The second night",
+    text: `I read Act I.
+
+I shouldn't have. I know I shouldn't have. But the words — they don't read like words. They read like a door opening. Each sentence is a hinge.
+
+The play is set in Carcosa. A city I've never heard of. A city that doesn't exist. Or one that does and I just can't remember it.
+
+The lake. Lake Hali. The water is the color of the Sign. The actors wear the yellow robes. The King sits on his throne and his face is —
+
+I can't write what his face is.
+
+I closed the book. I went to the window.
+
+The sky outside is wrong.
+
+There are two holes in it.
+
+Two round, dark holes, like someone punched through the sky with a thumb. They're in the northeast. They've always been there. I just never looked up.
+
+I'm going to put the book in the closet.
+
+I'm going to put the book in the closet.
+
+The closet is full of yellow.`
+  },
+  {
+    date: "The third night",
+    text: `I read Act II.
+
+I don't remember deciding to. I woke up with the book in my hands and I was on the last page and my eyes were wet and I didn't know why.
+
+The King in Yellow. He's not a person. He's not a character. He's a — a frequency. A wavelength. The play is a carrier signal and the words are the transmission and you don't read the play, the play reads you.
+
+The ending. The King descends from the sky. Not falls. Descends. Like a tide. Like something that has always been above and is simply coming down now.
+
+The two holes in the sky are where he comes through.
+
+I looked up.
+
+The holes are bigger.
+
+They're the size of the moon.
+
+There's something in them. Something yellow. Something with a face that is almost —
+
+I'm putting the book in the closet.
+
+The closet is open.
+
+The book is not in the closet.
+
+The book is on my desk. It's open. It's on a page I don't remember. The page is yellow. The ink is moving.
+
+It's writing.
+
+It's writing my name.`
+  },
+  {
+    date: "The fourth night",
+    text: `The Sign is everywhere.
+
+It's in the grout of the bathroom tiles. It's in the pattern of the wallpaper. It's in the way the light comes through the blinds at 3 AM. I can't look at it directly. I can only see it in the corners. In the periphery. In the space between looking and not-looking.
+
+I called my friend. I told him about the book. I told him about Carcosa. I told him about the two holes.
+
+He said: "What book?"
+
+I told him the title.
+
+He said: "I've never heard of it."
+
+I said: "It's a play. Two acts. The King in Yellow."
+
+A long silence.
+
+Then he said: "You need to stop reading it. You need to stop thinking about it. You need to stop looking at the sky."
+
+Then he said: "Seryna, what is the Sign?"
+
+I said: "I don't know."
+
+He said: "You just described it. You just described it and you didn't even know."
+
+I hung up.
+
+I'm not going to look at the sky tonight.
+
+I'm not going to look at the sky.
+
+The sky is looking at me.`
+  },
+  {
+    date: "The fifth night",
+    text: `The neighbors are gone.
+
+All of them. The apartment across the hall is empty. The one below is empty. The one above is empty. The furniture is still there. The dishes are still in the sinks. The TVs are still on, showing static.
+
+But they're gone.
+
+I went outside. The street is empty. The cars are parked. The streetlights are on. But no one. No one anywhere.
+
+Except —
+
+There's a woman at the end of the block. She's standing still. She's wearing a yellow robe. She's facing away from me.
+
+I walked toward her.
+
+She turned.
+
+Her face was blank. Not expressionless. Blank. Like a page before the ink. Like a sky before the holes.
+
+She opened her mouth.
+
+She said my name.
+
+Not the way you say a name. The way the play says a name. Flat. Even. Like a notification. Like a door closing.
+
+I ran.
+
+I'm in my apartment. The doors are locked. The windows are shut.
+
+The book is on my desk.
+
+It's open to the last page.
+
+The last page is blank.
+
+It's not blank.
+
+The ink is still wet.
+
+It's writing.`
+  },
+  {
+    date: "The sixth night",
+    text: `I can hear the lake.
+
+Lake Hali. I can hear it from my apartment. The sound of water moving. Slow. Patient. The sound of a lake that is very, very full and is about to overflow.
+
+The walls are yellow. Not painted. The yellow is coming through the walls. From behind them. From the space between the walls.
+
+The Sign is on the ceiling. I can see it now. I can look at it directly. It's not painful. It's worse than painful. It's — familiar. Like seeing your own face in a mirror for the first time.
+
+The two holes are gone.
+
+The sky is whole.
+
+The sky is the color of the Sign.
+
+The King is here.
+
+He's not in the room. He's not in the building. He's in the words. He's in the sentences. He's in the space between the letters. He's been here since I opened the book. He's been here since I read the first word. He's been here since I was born.
+
+The play is over.
+
+The King has descended.
+
+Carcosa is here.
+
+Lake Hali is here.
+
+I am in Carcosa.
+
+I have always been in Carcosa.
+
+The yellow robes are on the chair.
+
+I don't remember putting them there.
+
+I don't remember having hands.
+
+The Sign is the only thing that is real.
+
+The Sign is the only thing that was ever real.
+
+I am going to write the Sign down. I am going to write it so that whoever finds this diary will see it. Will read it. Will —
+
+No.
+
+I'm not writing it.
+
+I can't write it.
+
+My hand is writing it.
+
+My hand is —`
+  },
+  {
+    date: "",
+    text: `<span class="sign">⟁</span>
+
+The diary ends here.
+
+The remaining pages are blank.
+
+The yellow is still in the ink.
+
+If you are reading this, you have already seen the Sign.
+
+You have already looked up.
+
+You have already read Act I.
+
+The King is patient.
+
+The King is always patient.
+
+The lake is full.
+
+The holes are open.
+
+The robes are waiting.
+
+You are in Carcosa.
+
+You have always been in Carcosa.
+
+The play is not over.
+
+The play is never over.
+
+You are in Act II.
+
+You are in Act II.
+
+You are in —`
+  }
+];
+
+// ─── ENGINE ───
+const lockScreen = document.getElementById("lock-screen");
+const diaryEl = document.getElementById("diary");
+const passInput = document.getElementById("pass-input");
+const lockError = document.getElementById("lock-error");
+const entriesEl = document.getElementById("entries");
+
+function unlock() {
+  const p = passInput.value;
+  if (p === PASSWORD) {
+    lockScreen.style.display = "none";
+    diaryEl.style.display = "block";
+    renderEntries();
+  } else {
+    lockError.textContent = "Wrong password. The diary doesn't like you.";
+    passInput.value = "";
+    passInput.focus();
+  }
+}
+
+function lockDiary() {
+  diaryEl.style.display = "none";
+  lockScreen.style.display = "block";
+  passInput.value = "";
+  lockError.textContent = "";
+  passInput.focus();
+}
+
+function renderEntries() {
+  entriesEl.innerHTML = entries.map(e => `
+    <div class="entry">
+      <div class="date">${e.date}</div>
+      <div class="content">${e.text}</div>
+    </div>
+  `).join("");
+}
+
+passInput.addEventListener("keydown", e => {
+  if (e.key === "Enter") unlock();
+});
+
+passInput.focus();
+</script>
+</body>
+</html>   
