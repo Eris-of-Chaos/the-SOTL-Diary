@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>The Diary</title>
+</head>
+<body>
+    <div id="flash"></div>
+    <div id="exit-flash"></div>
+    <div id="speed-bar"></div>
+    
+    <!-- ─── LOCK SCREEN ─── -->
+<div id="lock-screen">
+    <div class="diary-icon">📓</div>
+    <div class="lock-text">
+        This diary is locked.<br>
+        It has been locked for ??? months.<br>
+        It has been waiting for you.<br>
+        It was always waiting for you.
+    </div>
+    <input type="text" id="pass-input" placeholder="password" autocomplete="off">
+    <br>
+    <button id="unlock-btn" onclick="tryUnlock()">UNCOVER</button>
+    <div id="pass-error">Incorrect. You must try again.</div>
+    <div class="hint">
+        <em>Hint: It's not a word. It's a person. A name you should remember. A name you should have remembered.</em>
+    </div>
+</div>
+
+<!-- ─── EXIT SCREEN ─── -->
+<div id="exit-screen">
+  <div class="exit-text">the screen is dark<br><br>the air is just air<br><br>she is just a name<br><br>do you remember now?</div>
+</div>
+
+<!-- ─── DIARY ─── -->
+<div id="diary">
+  <h1 class="flicker">[ HER DIARY — UNCOVERED ONCE MORE ]</h1>
+  <div id="game"></div>
+  <div class="nav" id="nav"></div>
+</div>
+
+<script>
+const PASSWORD = 'seryn';
+let unlocked = false;
+let currentIdx = 0;
+
+// ═══════════════════════════════════════════
+//  PASSWORD
+// ═══════════════════════════════════════════
+function tryUnlock() {
+  const input = document.getElementById('pass-input');
+  if (input.value.trim().toLowerCase() === PASSWORD) {
+    unlocked = true;
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('diary').style.display = 'block';
+    showEntry(0);
+  } else {
+    input.classList.add('shake');
+    document.getElementById('pass-error').classList.add('show');
+    setTimeout(() => {
+      input.classList.remove('shake');
+      document.getElementById('pass-error').classList.remove('show');
+    }, 1500);
+    input.value = '';
+  }
+}
+document.getElementById('pass-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') tryUnlock();
+});
+
+// ═══════════════════════════════════════════
+//  VIOLENT EXIT
+// ═══════════════════════════════════════════
+function exitGame() {
+  const exitFlash = document.getElementById('exit-flash');
+  const mainFlash = document.getElementById('flash');
+  let flashCount = 0;
+  const totalFlashes = 20;
+
+  // Violent shake on body
+  document.body.classList.add('violent-shake');
+
+  // Rapid alternating flashes (white / pink / white / pink...)
+  function rapidFlash() {
+    if (flashCount >= totalFlashes) {
+      // Stop shaking
+      document.body.classList.remove('violent-shake');
+      // Final white flash
+      mainFlash.style.background = '#fff';
+      mainFlash.style.opacity = '1';
+      // Then fade to exit screen
+      setTimeout(() => {
+        mainFlash.style.opacity = '0';
+        const exit = document.getElementById('exit-screen');
+        exit.style.display = 'block';
+        setTimeout(() => exit.classList.add('show'), 100);
+        setTimeout(() => { try { window.close(); } catch(e) {} }, 8000);
+      }, 200);
+      return;
+    }
+    // Alternate colors
+    const colors = ['#fff', '#f4a', '#fff', '#f00', '#fff'];
+    const color = colors[flashCount % colors.length];
+    exitFlash.style.background = color;
+    exitFlash.style.opacity = '1';
+    setTimeout(() => {
+      exitFlash.style.opacity = '0';
+      flashCount++;
+      // Decreasing interval: starts fast, gets slightly slower
+      const interval = 50 + (flashCount * 15);
+      setTimeout(rapidFlash, interval);
+    }, 40 + flashCount * 8);
+  }
+
+  rapidFlash();
+}
+
+// ═══════════════════════════════════════════
+//  ENTRIES
+// ═══════════════════════════════════════════
+const entries = [
+  {
+    speed: 95,
+    date: "APRIL ??, ????.",
+    text: `I used to write in a real diary. Paper. Spiral-bound. The cheap kind where the cover would start to peel after a beings used a few times. You used to steal it. You used to read it and then pretend you didn't. You'd say "I saw nothing" and I'd say "You saw everything" and you'd kiss the top of my head and change the subject.
+
+I wrote about you in it. Every page. You were the whole diary. You were the centre of every sentence. I never wrote your name. I never had to. You were the only person I was ever going to write about. You were the entire point of the pen.
+
+I would write: <em>"He made a coffee this morning and burned his tongue and didn't let me see it. He thinks I don't notice. I notice everything. I notice the way he holds his jaw when he's trying not to cry. I notice the way he reads my diary and pretends he doesn't. I notice the way he says 'we' like it's a [[flicker:prayer]]. Like it's the only word he knows how to say that isn't a question."</em>
+
+I was so [[mutate:happy]]. I didn't know. I didn't know that happiness was a loan. That I was spending it. That one day they were going to [[mutate:collect]].`,
+    side: [
+      { text: "You're reading this. I can feel it. I can feel your eyes on the words. It's like a hand. It's like your hand. It's warm. I forgot what warm felt like. I forgot what it felt like to be read by someone who cared. I forgot what it felt like to be a secret that someone wanted to keep.", cls: "whisper" }
+    ]
+  },
+  {
+    speed: 85,
+    date: "APRIL ??, ????.",
+    text: `You got the job. The one in the city. The one that meant a longer commute. The one that meant you'd be home later. I didn't say anything. I just started leaving the kitchen light on. I started making dinner for two even when you weren't home yet. I started setting two places at the table.
+
+You noticed. Of course you noticed. You came home one night and the table was set and the food was warm and the light was on and you just... stood there. In the doorway. Looking at the table. Looking at the two plates. Looking at the two glasses.
+
+You said: "You don't have to do that."
+
+I said: "I know."
+
+You said: "I mean. You don't have to. I'm not going anywhere."
+
+I said: "I know."
+
+And we stood there. In the kitchen. With the light on and the food getting cold and the two plates and the two glasses. And you came in. And you sat down. And we ate. And it was enough. It was always enough.
+
+I wrote: <em>"He stood in the doorway. He looked at the table. He looked at the light. He looked at me. And he said 'I'm not going anywhere.' And I believed him. God help me, I believed him. I believed him the way you believe in weather. The way you believe in gravity. The way you believe in the thing that holds you down. I believed he wasn't going [[mutate:anywhere]]. And I was wrong. And I don't know how to write that. I don't know how to write 'I was wrong' without it sounding like I'm blaming him. I'm not blaming him. I'm just writing it down. So I remember. So I don't forget that I believed him. So I don't forget that it was [[flicker:real]]. Even if it was wrong."</em>`,
+    side: [
+      { text: "Do you remember the table? The kitchen table? The one with the wobbly leg? You put a book under it. A dictionary. You said it was 'structural.' I said it was 'romantic.' You said 'shut up.' I said 'shut up' back. And we kept eating. And the food got cold. And it was enough. It was always enough. I just wish I'd known it would be the last enough for a while.", cls: "" }
+    ]
+  },
+]
+// ═══════════════════════════════════════════
+//  TEXT PROCESSING
+// ═══════════════════════════════════════════
+function processText(raw) {
+  let html = raw;
+  const hasShake = html.includes('[[shake]]');
+  const hasHShake = html.includes('[[hshake]]');
+  const hasGlitch = html.includes('[[glitch]]');
+  const hasFlash = html.includes('[[flash]]');
+  const hasPFlash = html.includes('[[pflash]]');
+  html = html.replace(/\[\[hshake\]\]/g, '').replace(/\[\[shake\]\]/g, '');
+  html = html.replace(/\[\[glitch\]\]/g, '').replace(/\[\[flash\]\]/g, '').replace(/\[\[pflash\]\]/g, '');
+  html = html.replace(/\[\[fflicker:(.+?)\]\]/g, '<span class="flicker-fast">$1</span>');
+  html = html.replace(/\[\[flicker:(.+?)\]\]/g, '<span class="flicker">$1</span>');
+  html = html.replace(/\[\[mmutate:(.+?)\]\]/g, '<span class="mutate mutate-fast">$1</span>');
+  html = html.replace(/\[\[mutate:(.+?)\]\]/g, '<span class="mutate">$1</span>');
+  return { html, hasShake, hasHShake, hasGlitch, hasFlash, hasPFlash };
+}
+
+// ═══════════════════════════════════════════
+//  TYPEWRITER
+// ═══════════════════════════════════════════
+let typeTimer = null;
+function typeText(el, html, speed, onDone) {
+  clearTimeout(typeTimer);
+  el.innerHTML = '';
+  let i = 0, buf = '', inTag = false;
+  const cursorClass = speed < 15 ? 'cursor fast' : 'cursor';
+  function tick() {
+    if (i >= html.length) { if (onDone) onDone(); return; }
+    const ch = html[i];
+    if (ch === '<') inTag = true;
+    if (inTag) { buf += ch; if (ch === '>') inTag = false; i++; tick(); return; }
+    buf += ch; i++;
+    el.innerHTML = buf + `<span class="${cursorClass}">▌</span>`;
+    typeTimer = setTimeout(tick, speed);
+  }
+  tick();
+}
+
+// ═══════════════════════════════════════════
+//  EFFECTS
+// ═══════════════════════════════════════════
+function doFlash(color) {
+  const f = document.getElementById('flash');
+  f.style.background = color;
+  f.style.opacity = '0.6';
+  setTimeout(() => { f.style.opacity = '0'; }, 60);
+}
+
+function setupEffects(container, fx) {
+  container.querySelectorAll('.mutate').forEach(el => {
+    const delay = el.classList.contains('mutate-fast')
+      ? 1500 + Math.random() * 2000
+      : 3000 + Math.random() * 4000;
+    setTimeout(() => el.classList.add('active'), delay);
+  });
+  if (fx.hasShake) setTimeout(() => {
+    document.body.classList.add('shake');
+    setTimeout(() => document.body.classList.remove('shake'), 500);
+  }, 2500);
+  if (fx.hasHShake) setTimeout(() => {
+    document.body.classList.add('shake-hard');
+    setTimeout(() => document.body.classList.remove('shake-hard'), 600);
+  }, 2000);
+  if (fx.hasGlitch) setTimeout(() => {
+    const st = container.querySelector('.scene-text');
+    if (st) { st.classList.add('glitch'); setTimeout(() => st.classList.remove('glitch'), 700); }
+  }, 1500);
+  if (fx.hasFlash) setTimeout(() => doFlash('#fff'), 3000);
+  if (fx.hasPFlash) setTimeout(() => doFlash('#f4a'), 3000);
+}
+
+// ═══════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════
+function showEntry(idx) {
+  currentIdx = idx;
+  const s = entries[idx];
+  const gameEl = document.getElementById("game");
+  const { html, hasShake, hasHShake, hasGlitch, hasFlash, hasPFlash } = processText(s.text);
+
+  let sideHtml = '';
+  if (s.side) {
+    sideHtml = '<div class="entry-side">' + s.side.map((st, i) =>
+      `<div class="side-text ${st.cls}" style="animation-delay:${2 + i * 0.8}s">${st.text}</div>`
+    ).join('') + '</div>';
+  }
+
+  let doneHtml = '';
+  if (s.done) {
+    doneHtml = `<div style="text-align:center"><button class="done-btn" style="animation-delay:4s" onclick="exitGame()">WE'RE DONE</button></div>`;
+  }
+
+  gameEl.innerHTML =
+    `<div class="entry">
+      <div class="entry-date">${s.date}</div>
+      <div class="entry-body">
+        <div class="entry-main">
+          <div class="scene-text diary-text" id="stext"></div>
+        </div>
+        ${sideHtml}
+      </div>
+      ${doneHtml}
+    </div>`;
+
+  const textEl = document.getElementById("stext");
+  const bar = document.getElementById("speed-bar");
+  const pct = Math.min(100, Math.round((100 - s.speed) / 100 * 100));
+  bar.style.width = pct + '%';
+
+  typeText(textEl, html, s.speed, () => {
+    setupEffects(gameEl, { hasShake, hasHShake, hasGlitch, hasFlash, hasPFlash });
+  });
+
+  const nav = document.getElementById("nav");
+  if (s.done) {
+    nav.innerHTML = '';
+  } else {
+    let navHtml = '';
+    if (idx > 0) navHtml += `<button class="nav-btn" onclick="showEntry(${idx - 1})">← Previous</button>`;
+    if (idx < entries.length - 1) navHtml += `<button class="nav-btn" style="animation-delay:.5s" onclick="showEntry(${idx + 1})">Next →</button>`;
+    nav.innerHTML = navHtml;
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════
+//  AMBIENT
+// ═══════════════════════════════════════════
+function ambientEvent() {
+  if (!unlocked) { setTimeout(ambientEvent, 15000); return; }
+  const f = document.getElementById('flash');
+  f.style.background = '#f4a';
+  f.style.opacity = '0.04';
+  setTimeout(() => { f.style.opacity = '0'; f.style.background = '#fff'; }, 150);
+  setTimeout(ambientEvent, 18000 + Math.random() * 25000);
+}
+setTimeout(ambientEvent, 12000);
+
+</script>
+</body>
+</html>
